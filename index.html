@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solo Leveling Quest App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6a00ff;
+      --secondary: #ff3e00;
+      --dark: #0a0a1a;
+      --darker: #050510;
+      --light: #e0e0ff;
+      --accent: #00ff9d;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: var(--light);
+      background-color: var(--dark);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(106, 0, 255, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 62, 0, 0.1) 0%, transparent 20%),
+        url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: rgba(10, 10, 26, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(106, 0, 255, 0.3);
+      animation: fadeIn 1s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+      letter-spacing: 2px;
+    }
+    
+    .player-info {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(106, 0, 255, 0.2), rgba(10, 10, 26, 0.8));
+      border-radius: 12px;
+      border: 1px solid var(--primary);
+      box-shadow: 0 5px 15px rgba(106, 0, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .player-info::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        transparent 0%,
+        transparent 45%,
+        rgba(106, 0, 255, 0.1) 50%,
+        transparent 55%,
+        transparent 100%
+      );
+      animation: shine 4s infinite;
+      transform: rotate(30deg);
+    }
+    
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      100% { transform: translateX(100%) rotate(30deg); }
+    }
+    
+    .player-level {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+    }
+    
+    .player-level::before {
+      content: '⚡';
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+    
+    .player-stat {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .stat-name {
+      color: var(--light);
+      opacity: 0.8;
+    }
+    
+    .stat-value {
+      font-weight: bold;
+    }
+    
+    .exp-bar-container {
+      height: 10px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 5px;
+      margin: 15px 0;
+      overflow: hidden;
+    }
+    
+    .exp-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 5px;
+      width: 0;
+      transition: width 0.5s ease-out, background-color 0.3s;
+      position: relative;
+    }
+    
+    .exp-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin: 25px 0 15px;
+      text-shadow: 0 0 5px rgba(0, 255, 157, 0.3);
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title::before {
+      content: '⌲';
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    #questList {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    
+    .quest-item {
+      background: linear-gradient(135deg, rgba(16, 16, 36, 0.8), rgba(10, 10, 26, 0.9));
+      padding: 18px;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .quest-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(106, 0, 255, 0.3);
+    }
+    
+    .quest-item.completed {
+      border-left-color: var(--accent);
+      opacity: 0.7;
+    }
+    
+    .quest-item.completed::after {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .quest-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      color: white;
+    }
+    
+    .quest-status {
+      color: var(--accent);
+      font-style: italic;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+    
+    .quest-reward {
+      color: rgba(224, 224, 255, 0.7);
+      font-size: 0.9rem;
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .reward-item {
+      display: flex;
+      align-items: center;
+    }
+    
+    .reward-item::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 5px;
+      border-radius: 50%;
+    }
+    
+    .exp-reward::before {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+    
+    .gold-reward::before {
+      background: linear-gradient(135deg, #ffd700, #ff9500);
+    }
+    
+    button {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(106, 0, 255, 0.3);
+      display: block;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(106, 0, 255, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        transparent 0%,
+        transparent 45%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 55%,
+        transparent 100%
+      );
+      animation: shine 4s infinite;
+      transform: rotate(30deg);
+    }
+    
+    .stats-button {
+      background: rgba(106, 0, 255, 0.2);
+      border: 1px solid var(--primary);
+      color: var(--light);
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+    }
+    
+    .stats-button:hover {
+      background: rgba(106, 0, 255, 0.3);
+    }
+    
+    .stats-menu {
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(16, 16, 36, 0.8);
+      border-radius: 8px;
+      border: 1px solid rgba(106, 0, 255, 0.3);
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(106, 0, 255, 0.2);
+    }
+    
+    .stat-name {
+      color: var(--light);
+    }
+    
+    .stat-value {
+      font-weight: bold;
+      color: white;
+    }
+    
+    .stat-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .stat-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .stat-btn:hover:not(:disabled) {
+      transform: scale(1.1);
+    }
+    
+    .level-up {
+      animation: levelUp 0.5s ease-out;
+    }
+    
+    @keyframes levelUp {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transform: translateX(200%);
+      transition: transform 0.3s ease-out;
+      z-index: 1000;
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SOLO LEVELING QUEST</h1>
+    
+    <div class="player-info" id="playerInfo">
+      <!-- Player info will be inserted here by JavaScript -->
+    </div>
+    
+    <div class="section-title">Daily Quests</div>
+    <div id="questList">
+      <!-- Quests will be inserted here by JavaScript -->
+    </div>
+    
+    <button id="resetButton">RESET DAILY QUESTS</button>
+  </div>
+
+  <div class="notification" id="notification"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
